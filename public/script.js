@@ -1,28 +1,30 @@
 const socket = io();
 const my = {
-  id: "",
-  pmpname: "",
+  id: null,
+  pmpname: null,
   isOwner: false,
 };
 let playerList = [];
 const room = {
   roomId: null,
-  numberOfSongs : null,
-  updatedSongLinks : [],
-}
+  numberOfSongs: null,
+  updatedSongLinks: [],
+  voting: {},
+};
 
 /************************************************
  ***Common Section--------------------
  *************************************************/
 function renderPlayers() {
-  document.querySelector("#settings-players").innerHTML = playerList
-    .map(
-      (player) =>
-        `<li id="player-${player.id}">${player.pmpname} ${
-          player.isOwner ? "(Room Owner)" : ""
-        }</li>`
-    )
-    .join("");
+  if (document.querySelector("#settings-players"))
+    document.querySelector("#settings-players").innerHTML = playerList
+      .map(
+        (player) =>
+          `<p class="bg-danger rounded w-auto p-10" id="player-${player.id}">${
+            player.pmpname
+          } ${player.isOwner ? "(Host)" : ""}</p>`
+      )
+      .join("");
 }
 
 function updateCopyInvite() {
@@ -50,7 +52,13 @@ socket.on("disconnection", async (player) => {
     (playerDetails) => playerDetails.id !== player.id
   );
   renderPlayers();
+  if (document.querySelector("#game-page").classList.contains("d-flex")) {
+    socket.emit("getUpdatedVotes");
+    renderVotingSection();
+  }
+
   if (document.querySelector(`#score-player-${player.id}`)) {
+    //
     document.querySelector(`#score-player-${player.id}`).remove();
   }
   toastTopAlert(
@@ -59,18 +67,36 @@ socket.on("disconnection", async (player) => {
     "alert-secondary"
   );
   socket.emit("roomExists", { id: room.roomId });
-  socket.on("roomExists", (data) => {
-    if (!data.exist && !document.querySelector("#settings")) {
-      toastTopAlert(
-        `Room closed because of Less Participants`,
-        "Again gather all your buddies 😢 Believe me It will be fun ❤️",
-        "alert-danger"
-      );
-      window.setTimeout(function () {
-        window.location.href = "/";
-      }, 3000);
-    }
-  });
+});
+
+socket.on("roomExists", (data) => {
+  if (!data.exist) {
+    if (document.querySelector("#join-room"))
+      document.querySelector("#join-room").disabled = true;
+    toastTopAlert(
+      "Room doesn't exist or host left",
+      "Room you are trying to access is not created, please create a new Room.",
+      "alert-danger"
+    );
+    window.setTimeout(function () {
+      window.location.href = "/";
+    }, 3000);
+  }
+});
+
+socket.on("isRoomStarted", (data) => {
+  if (data.isStarted) {
+    if (document.querySelector("#join-room"))
+      document.querySelector("#join-room").disabled = true;
+    toastTopAlert(
+      "Room already started",
+      "Room you are trying to access is already started playing...",
+      "alert-danger"
+    );
+    window.setTimeout(function () {
+      window.location.href = "/";
+    }, 3000);
+  }
 });
 
 /************************************************

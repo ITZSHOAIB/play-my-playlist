@@ -1,0 +1,99 @@
+<div
+  class="container-fluid d-none flex-row justify-content-center align-items-start flex-wrap"
+  id="game-page"
+>
+  <div class="mw-full d-flex flex-column align-items-center flex-fill">
+    <div class="card rounded shadow-lg border-0 settings-card">
+      <h2 class="card-title">
+        Current Song Link... <span id="songs-left">Songs: </span>
+      </h2>
+      <div class="input-group">
+        <input
+          type="text"
+          id="current-song-link"
+          class="form-control form-control-lg bg-light text-dark font-weight-bold"
+          value="Current Song Link"
+          readonly="readonly"
+        />
+        <div class="input-group-append">
+          <button
+            class="btn btn-lg btn-primary"
+            type="button"
+            id="copy-current-song"
+          >
+            Copy!
+          </button>
+        </div>
+      </div>
+
+      <div class="row">
+        <button
+          class="btn btn-lg btn-block mt-20"
+          type="button"
+          id="reveal-song-owner"
+          disabled
+        >
+          Reveal Song Owner
+        </button>
+      </div>
+
+      <p
+        class="bg-light text-dark rounded w-auto p-10 d-none"
+        id="current-song-owner"
+      ></p>
+      <div class="row">
+        <button
+          class="btn btn-lg btn-block btn-secondary mt-20"
+          type="button"
+          id="next-round"
+          disabled
+        >
+          Next Round
+        </button>
+      </div>
+    </div>
+
+    <div class="card rounded shadow-lg border-0 settings-card">
+      <h2 class="card-title">Please caste votes</h2>
+
+      <!-- Horizontally stacked radio buttons -->
+      <div
+        class="d-flex flex-wrap justify-content-center mb-15"
+        id="voting-section"
+      ></div>
+
+      <div class="row">
+        <button
+          class="btn btn-primary btn-lg btn-block"
+          type="button"
+          id="caste-vote"
+        >
+          Vote
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mw-full d-flex flex-column align-items-center flex-fill">
+    <h4 class="text-decoration-underline text-center mb-0">
+      Players' Casted Votes!
+    </h4>
+    <div
+      class="card rounded border overflow-auto settings-card"
+      id="other-players-votes"
+    ></div>
+
+    <h4 class="text-decoration-underline text-center mb-0">Scoreboard</h4>
+    <div
+      class="card rounded border overflow-auto settings-card font-size-12"
+      id="scoreboard"
+    >
+      <p class="bg-primary rounded w-auto p-10" id="player-score-1">
+        Player 1 - 20
+      </p>
+      <p class="bg-primary rounded w-auto p-10" id="player-score-2">
+        Player 2 - 0
+      </p>
+    </div>
+  </div>
+</div>

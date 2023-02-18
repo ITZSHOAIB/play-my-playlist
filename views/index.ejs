@@ -5,23 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Play My Playlist</title>
     <!-- Halfmoon CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/css/halfmoon-variables.min.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/css/halfmoon-variables.min.css"
+      rel="stylesheet"
+    />
     <!-- Halfmoon JS -->
     <script src="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/js/halfmoon.min.js"></script>
 
-    <link rel="stylesheet" href="style.css">
-    
-    <script src="/socket.io/socket.io.js"></script>    
+    <link rel="stylesheet" href="style.css" />
+
+    <script src="/socket.io/socket.io.js"></script>
   </head>
   <body class="dark-mode">
     <div class="sticky-alerts"></div>
-    <%- include('partials/landing', { roomID }) %>  
-    <%- include('partials/settings', { roomID }) %>
-    <%- include('partials/songsPage')%>
+    <%- include('partials/landing', { roomID }) %> <%-
+    include('partials/settings', { roomID }) %> <%-
+    include('partials/songsPage')%> <%- include('partials/gamePage')%>
     <!-- End Here -->
     <script src="script.js"></script>
     <script src="landing-script.js"></script>
     <script src="settings-script.js"></script>
     <script src="songsPage-script.js"></script>
+    <script src="gamePage-script.js"></script>
   </body>
 </html>
