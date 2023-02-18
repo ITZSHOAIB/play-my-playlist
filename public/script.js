@@ -1,15 +1,15 @@
 const socket = io();
 const my = {
-  id: "",
-  pmpname: "",
+  id: null,
+  pmpname: null,
   isOwner: false,
 };
 let playerList = [];
 const room = {
   roomId: null,
-  numberOfSongs : null,
-  updatedSongLinks : [],
-}
+  numberOfSongs: null,
+  updatedSongLinks: [],
+};
 
 /************************************************
  ***Common Section--------------------
