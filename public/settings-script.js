@@ -29,7 +29,6 @@ function settingsAsOwner() {
 //get rest of the players
 socket.on("joinRoom", putPlayer);
 socket.on("otherPlayers", ({ players, isStarted, numberOfSongs }) => {
-  if (isStarted) insertSongspage(numberOfSongs);
   players.forEach((player) => putPlayer(player));
 });
 

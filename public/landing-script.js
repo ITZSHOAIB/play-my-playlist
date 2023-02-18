@@ -21,9 +21,7 @@ const settingsPage = document.querySelector("#settings");
 if (searchParams.has("id")) {
   room.roomId = searchParams.get("id");
   socket.emit("roomExists", { id: room.roomId });
-  socket.on("roomExists", (data) => {
-    if (!data.exist) window.location.href = "/";
-  });
+  socket.emit("isRoomStarted", { id: room.roomId });
   joinRoomBtnL.addEventListener("click", () => {
     if (landingToSettings()) settingsAsPlayer();
   });

@@ -4,7 +4,9 @@
 >
   <div class="mw-full d-flex flex-column align-items-center flex-fill">
     <div class="card rounded shadow-lg border-0 settings-card">
-      <h2 class="card-title">Current Song Playing... Round 1</h2>
+      <h2 class="card-title">
+        Current Song Link... <span id="songs-left">Songs: </span>
+      </h2>
       <div class="input-group">
         <input
           type="text"
@@ -29,19 +31,22 @@
           class="btn btn-lg btn-block mt-20"
           type="button"
           id="reveal-song-owner"
+          disabled
         >
           Reveal Song Owner
         </button>
       </div>
 
-      <p class="bg-light text-dark rounded w-auto p-10" id="current-song-owner">
-        Song Owner: Sk Sohab
-      </p>
+      <p
+        class="bg-light text-dark rounded w-auto p-10 d-none"
+        id="current-song-owner"
+      ></p>
       <div class="row">
         <button
           class="btn btn-lg btn-block btn-secondary mt-20"
           type="button"
           id="next-round"
+          disabled
         >
           Next Round
         </button>
@@ -52,26 +57,10 @@
       <h2 class="card-title">Please caste votes</h2>
 
       <!-- Horizontally stacked radio buttons -->
-      <div class="d-flex flex-wrap justify-content-center mb-15">
-        <div class="custom-radio m-15">
-          <input
-            type="radio"
-            name="voting-radio"
-            id="player-id-1"
-            value="player-id-1"
-          />
-          <label for="player-id-1">Player 1</label>
-        </div>
-        <div class="custom-radio m-15">
-          <input
-            type="radio"
-            name="voting-radio"
-            id="player-id-2"
-            value="player-id-2"
-          />
-          <label for="player-id-2">Player 2</label>
-        </div>
-      </div>
+      <div
+        class="d-flex flex-wrap justify-content-center mb-15"
+        id="voting-section"
+      ></div>
 
       <div class="row">
         <button
@@ -92,19 +81,12 @@
     <div
       class="card rounded border overflow-auto settings-card"
       id="other-players-votes"
-    >
-      <p class="bg-success text-dark rounded w-auto p-10" id="player-vote-1">
-        Player 1 - Player 2
-      </p>
-      <p class="bg-danger rounded w-auto p-10" id="player-vote-2">
-        Player 2 - None
-      </p>
-    </div>
+    ></div>
 
-    <h4 class="text-decoration-underline text-center mb-0">Scorecard</h4>
+    <h4 class="text-decoration-underline text-center mb-0">Scoreboard</h4>
     <div
       class="card rounded border overflow-auto settings-card font-size-12"
-      id="scorecard"
+      id="scoreboard"
     >
       <p class="bg-primary rounded w-auto p-10" id="player-score-1">
         Player 1 - 20

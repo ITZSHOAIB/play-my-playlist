@@ -10,7 +10,6 @@ class Room {
   //     {
   //       owner: "",
   //       link: "",
-  //       isPlayed: false,
   //     },
   //   ];
 
@@ -21,6 +20,8 @@ class Room {
       numberOfSongs: 3,
       isStarted: false,
       songList: [],
+      currentSong: null,
+      voting: {},
     };
     games[id][socket.id] = {};
     games[id][socket.id].score = 0;
@@ -60,7 +61,6 @@ class Room {
     const { socket } = this;
     games[socket.roomID].numberOfSongs = +data.numberOfSongs;
     socket.to(socket.roomID).emit("settingsUpdate", data);
-    console.log(games);
   }
 
   moveToSongsPage() {
@@ -82,7 +82,6 @@ class Room {
         return {
           owner: socket.id,
           link: songLink,
-          isPlayed: false,
         };
       }),
     ];
@@ -99,6 +98,15 @@ class Room {
       exist = true;
     }
     io.to(socket.id).emit("roomExists", { exist });
+  }
+
+  isRoomStarted(data) {
+    const { io, socket } = this;
+    let isStarted = false;
+    if (games[data.id] || games[socket.roomID]) {
+      isStarted = games[data.id].isStarted;
+    }
+    io.to(socket.id).emit("isRoomStarted", { isStarted });
   }
 }
 

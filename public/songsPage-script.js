@@ -69,4 +69,10 @@ function startGame() {
     );
     return;
   }
+  socket.emit("startGame");
+  insertGamePage();
 }
+
+socket.on("startGame", () => {
+  insertGamePage();
+});
