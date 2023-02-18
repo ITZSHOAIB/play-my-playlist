@@ -18,9 +18,9 @@ function renderPlayers() {
   document.querySelector("#settings-players").innerHTML = playerList
     .map(
       (player) =>
-        `<li id="player-${player.id}">${player.pmpname} ${
-          player.isOwner ? "(Room Owner)" : ""
-        }</li>`
+        `<p class="bg-danger rounded w-auto p-10" id="player-${player.id}">${
+          player.pmpname
+        } ${player.isOwner ? "(Host)" : ""}</p>`
     )
     .join("");
 }

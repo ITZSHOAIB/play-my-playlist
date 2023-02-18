@@ -1,7 +1,5 @@
-#!/usr/bin/env node
-
-const app = require("../app");
-const sockets = require("../sockets");
+const app = require("./app");
+const sockets = require("./sockets");
 
 global.games = {};
 

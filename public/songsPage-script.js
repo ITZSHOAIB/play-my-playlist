@@ -3,7 +3,6 @@
  *************************************************/
 
 function insertSongspage(numberOfSongs) {
-  console.log(room.numberOfSongs);
   document.querySelector("#settings").remove();
   document.querySelector("#songs-page").classList.remove("d-none");
   document.querySelector("#songs-page").classList.add("d-flex");
@@ -55,7 +54,9 @@ socket.on("updatedSongList", (updatedSongLinks) => {
   room.updatedSongLinks = updatedSongLinks.sort();
   document.querySelector("#entered-song-list").innerHTML = updatedSongLinks
     .sort()
-    .map((songLink) => `<li>${songLink}</li>`)
+    .map(
+      (songLink) => `<p class="bg-primary rounded w-auto p-10">${songLink}</p>`
+    )
     .join("");
 });
 

@@ -2,9 +2,9 @@
   "name": "dumb_charades",
   "version": "1.0.0",
   "description": "A Dumb Charades Game",
-  "main": "./bin/www",
+  "main": "index.js",
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node index.js"
   },
   "author": "Sohab Sheikh",
   "license": "MIT",
