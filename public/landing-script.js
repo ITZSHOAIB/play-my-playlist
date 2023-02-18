@@ -10,16 +10,15 @@ window.onload = () => {
 const joinRoomBtnL = document.querySelector("#join-room");
 const createRoomBtnL = document.querySelector("#create-room");
 const nameInputL = document.querySelector("#name-landing-input");
-const params = window.location
-  .toString()
-  .substring(window.location.toString().indexOf("?"));
-const searchParams = new URLSearchParams(params);
+const searchParams = new URLSearchParams(window.location.search);
+console.log(searchParams.get("id"));
 const landingPage = document.querySelector("#landing");
 const settingsPage = document.querySelector("#settings");
 
 //new player or joinee
 if (searchParams.has("id")) {
   room.roomId = searchParams.get("id");
+  console.log(searchParams.get("id"));
   socket.emit("roomExists", { id: room.roomId });
   socket.emit("isRoomStarted", { id: room.roomId });
   joinRoomBtnL.addEventListener("click", () => {
