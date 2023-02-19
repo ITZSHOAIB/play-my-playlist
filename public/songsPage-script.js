@@ -47,10 +47,12 @@ function updateSongList() {
     );
     return;
   }
+  makeLoaderVisible(true);
   socket.emit("updateSongList", songList);
 }
 
 socket.on("updatedSongList", (updatedSongLinks) => {
+  makeLoaderVisible(false);
   room.updatedSongLinks = updatedSongLinks.sort();
   document.querySelector("#entered-song-list").innerHTML = updatedSongLinks
     .sort()
@@ -69,6 +71,7 @@ function startGame() {
     );
     return;
   }
+  makeLoaderVisible(true);
   socket.emit("startGame");
   insertGamePage();
 }

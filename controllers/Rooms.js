@@ -44,7 +44,7 @@ class Room {
     socket.join(roomID);
     socket.roomID = roomID;
     socket.to(roomID).emit("joinRoom", data.player);
-    socket.emit("otherPlayers", {
+    io.to(socket.id).emit("otherPlayers", {
       players: players.reduce((acc, id) => {
         if (socket.id !== id) {
           const { player } = io.of("/").sockets.get(id);

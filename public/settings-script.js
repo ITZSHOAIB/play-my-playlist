@@ -2,6 +2,23 @@
  ***Settings Page Code Section --------------------
  *************************************************/
 
+//Settings page as Room Owner--
+function settingsAsOwner() {
+  document
+    .querySelector("#no-of-songs")
+    .addEventListener("change", updateSettings);
+  my.id = socket.id;
+  my.isOwner = true;
+  makeLoaderVisible(true);
+  socket.emit("newPrivateRoom", my);
+  socket.on("newPrivateRoom", (data) => {
+    makeLoaderVisible(false);
+    room.roomId = data.gameID;
+    updateCopyInvite();
+    putPlayer(my);
+  });
+}
+
 //Settings page as other Player--
 function settingsAsPlayer() {
   document.querySelector("#no-of-songs").setAttribute("disabled", true);
@@ -12,23 +29,9 @@ function settingsAsPlayer() {
   putPlayer(my);
 }
 
-//Settings page as Room Owner--
-function settingsAsOwner() {
-  document
-    .querySelector("#no-of-songs")
-    .addEventListener("change", updateSettings);
-  my.id = socket.id;
-  my.isOwner = true;
-  socket.emit("newPrivateRoom", my);
-  socket.on("newPrivateRoom", (data) => {
-    room.roomId = data.gameID;
-    updateCopyInvite();
-    putPlayer(my);
-  });
-}
 //get rest of the players
 socket.on("joinRoom", putPlayer);
-socket.on("otherPlayers", ({ players, isStarted, numberOfSongs }) => {
+socket.on("otherPlayers", ({ players }) => {
   players.forEach((player) => putPlayer(player));
 });
 

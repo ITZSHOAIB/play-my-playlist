@@ -68,7 +68,8 @@ class Game {
 
   getUpdatedVotes() {
     const { io, socket } = this;
-    io.in(socket.roomID).emit("updatedVotes", games[socket.roomID]["voting"]);
+    if (games[socket.roomID])
+      io.in(socket.roomID).emit("updatedVotes", games[socket.roomID]["voting"]);
   }
 }
 

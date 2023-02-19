@@ -15,6 +15,14 @@ const room = {
 /************************************************
  ***Common Section--------------------
  *************************************************/
+
+function makeLoaderVisible(visible) {
+  console.log(visible);
+  if (visible)
+    document.querySelector(".spinner-container").style.display = "flex";
+  else document.querySelector(".spinner-container").style.display = "none";
+}
+
 function renderPlayers() {
   if (document.querySelector("#settings-players"))
     document.querySelector("#settings-players").innerHTML = playerList
@@ -43,6 +51,19 @@ function updateCopyInvite() {
   });
 }
 
+function reloadToMainPageIfRoomClosed() {
+  makeLoaderVisible(true);
+  toastTopAlert(
+    "Room doesn't exist or host left",
+    "Room you are trying to access is not created, please create a new Room.",
+    "alert-danger"
+  );
+  window.setTimeout(function () {
+    makeLoaderVisible(false);
+    window.location.href = "/";
+  }, 3000);
+}
+
 /************************************************
  ***Common Socket Listeners--------------------
  *************************************************/
@@ -56,9 +77,7 @@ socket.on("disconnection", async (player) => {
     socket.emit("getUpdatedVotes");
     renderVotingSection();
   }
-
   if (document.querySelector(`#score-player-${player.id}`)) {
-    //
     document.querySelector(`#score-player-${player.id}`).remove();
   }
   toastTopAlert(
@@ -73,16 +92,12 @@ socket.on("roomExists", (data) => {
   if (!data.exist) {
     if (document.querySelector("#join-room"))
       document.querySelector("#join-room").disabled = true;
-    toastTopAlert(
-      "Room doesn't exist or host left",
-      "Room you are trying to access is not created, please create a new Room.",
-      "alert-danger"
-    );
-    window.setTimeout(function () {
-      window.location.href = "/";
-    }, 3000);
+    reloadToMainPageIfRoomClosed();
   }
 });
+
+//This will happen when we will not have enought player or Host left
+socket.on("roomClosed", reloadToMainPageIfRoomClosed);
 
 socket.on("isRoomStarted", (data) => {
   if (data.isStarted) {

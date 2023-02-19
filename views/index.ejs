@@ -17,6 +17,11 @@
     <script src="/socket.io/socket.io.js"></script>
   </head>
   <body class="dark-mode">
+    <div class="spinner-container">
+      <span class="loader"></span>
+      <h4>Please Wait... Breathe in, Breathe Out...</h4>
+    </div>
+
     <div class="sticky-alerts"></div>
     <%- include('partials/landing', { roomID }) %> <%-
     include('partials/settings', { roomID }) %> <%-

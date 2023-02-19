@@ -3,12 +3,14 @@
  *************************************************/
 
 function insertGamePage() {
+  makeLoaderVisible(false);
   renderGamePage();
   if (my.isOwner) {
     socket.emit("nextRound");
     document.querySelector("#reveal-song-owner").disabled = false;
 
     document.querySelector("#next-round").addEventListener("click", () => {
+      makeLoaderVisible(true);
       socket.emit("nextRound");
     });
 
@@ -106,6 +108,7 @@ function casteVote() {
   const myVote = document.querySelector(
     "input[name='voting-radio']:checked"
   ).value;
+  makeLoaderVisible(true);
   socket.emit("casteVote", myVote.split("player-vote-id-")[1]);
 }
 
@@ -118,22 +121,29 @@ function revealSongOwner() {
     );
     return;
   }
+  makeLoaderVisible(true);
   socket.emit("revealSongOwner");
 }
 
 socket.on("nextRound", (data) => {
+  makeLoaderVisible(false);
   renderGamePage();
   resetForNextRound(data);
 });
 
 socket.on("revealSongOwner", (data) => {
   const { ownerId, ownerName } = data;
+  makeLoaderVisible(false);
+
   document.querySelector("#current-song-owner").classList.remove("d-none");
   document.querySelector("#current-song-owner").classList.add("d-flex");
   document.querySelector(
     "#current-song-owner"
   ).innerHTML = `Song Owner: ${ownerName}`;
-  if (my.isOwner) document.querySelector("#next-round").disabled = false;
+  if (my.isOwner) {
+    document.querySelector("#reveal-song-owner").disabled = true;
+    document.querySelector("#next-round").disabled = false;
+  }
   Array.from(document.querySelectorAll(`.voted-to-${ownerId}`)).forEach(
     (votedEle) => {
       if (votedEle.classList.contains("bg-secondary"))
@@ -146,11 +156,13 @@ socket.on("revealSongOwner", (data) => {
 });
 
 socket.on("updatedVotes", (voting) => {
+  makeLoaderVisible(false);
   room.voting = voting;
   renderOtherPlayersVotes(voting);
 });
 
 socket.on("updatedScoreboard", (scoreboard) => {
+  makeLoaderVisible(false);
   renderScoreboard(scoreboard);
 });
 
@@ -164,6 +176,7 @@ function resetForNextRound(data) {
   document.querySelector("#current-song-link").value = song;
 
   document.querySelector("#next-round").disabled = true;
+  if (my.isOwner) document.querySelector("#reveal-song-owner").disabled = false;
   room.voting = {};
   if (document.querySelector("input[name='voting-radio']:checked"))
     document.querySelector(

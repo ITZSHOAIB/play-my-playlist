@@ -10,8 +10,21 @@ class Disconnect {
     const { io, socket } = this;
     const { roomID } = socket;
     if (games[roomID]) {
-      if (games[roomID][socket.id].isOwner) delete games[roomID];
-      else if (Number.isInteger(games[roomID][socket.id].score)) {
+      console.log(
+        "🚀 ~ file: Disconnect.js:10 ~ Disconnect ~ onDisconnect ~ ",
+        getPlayersCount(roomID),
+        games[roomID].isStarted,
+        games[roomID][socket.id].isOwner
+      );
+      if (
+        (getPlayersCount(roomID) < 3 && games[roomID].isStarted) ||
+        (!games[roomID].isStarted && getPlayersCount(roomID) < 2) ||
+        games[roomID][socket.id].isOwner
+      ) {
+        socket.to(socket.roomID).emit("roomClosed");
+        delete games[roomID];
+        return;
+      } else if (Number.isInteger(games[roomID][socket.id].score)) {
         games[roomID].voting = Object.fromEntries(
           Object.entries(games[roomID].voting).filter(
             ([key, value]) => key !== socket.id && value !== socket.id
@@ -21,11 +34,7 @@ class Disconnect {
           (song) => song.owner !== socket.id
         );
         delete games[roomID][socket.id];
-      } else if (
-        (getPlayersCount(roomID) < 2 && games[roomID].isStarted) ||
-        (!games[roomID].isStarted && getPlayersCount(roomID) < 1)
-      )
-        delete games[roomID];
+      }
     }
     if (socket.player) {
       socket.player.id = socket.id;
