@@ -22,8 +22,8 @@ module.exports.init = (server) => {
     socket.on("newPrivateRoom", (player) =>
       new Room(io, socket).createPrivateRoom(player)
     );
-    socket.on("joinRoom", async (data) => {
-      await new Room(io, socket).joinRoom(data);
+    socket.on("joinRoom", (data) => {
+      new Room(io, socket).joinRoom(data);
     });
     socket.on("settingsUpdate", (data) =>
       new Room(io, socket).updateSettings(data)

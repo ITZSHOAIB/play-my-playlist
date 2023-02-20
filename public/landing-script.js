@@ -61,5 +61,13 @@ socket.on("getGameState", ({ gameState }) => {
     document.querySelector("#join-room").addEventListener("click", () => {
       if (landingToSettings()) settingsAsPlayer();
     });
+    return;
+  }
+  if (gameState === GAME_STATE.gamePage) {
+    toastTopAlert(
+      "Game Already Started :(",
+      "They don't like you I guess, they have started playing without you only :(",
+      "alert-secondary"
+    );
   }
 });

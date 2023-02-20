@@ -35,8 +35,9 @@ function insertGamePage() {
 }
 
 function renderGamePage() {
-  if (document.querySelector("#songs-page"))
+  if (document.querySelector("#songs-page")) {
     document.querySelector("#songs-page").remove();
+  }
 
   if (document.querySelector("#game-page").classList.contains("d-none")) {
     document.querySelector("#game-page").classList.remove("d-none");

@@ -31,10 +31,9 @@ class Room {
       players: games[socket.data.roomID]["players"],
     });
   }
-  async joinRoom(data) {
+  joinRoom(data) {
     const { io, socket } = this;
     const roomID = data.id;
-    const players = Array.from(await io.in(roomID).allSockets());
     games[roomID]["players"][socket.id] = {
       score: 0,
       name: data.player.name,
