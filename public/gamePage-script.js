@@ -5,7 +5,7 @@
 function insertGamePage() {
   makeLoaderVisible(false);
   renderGamePage();
-  if (my.isOwner) {
+  if (my.isHost) {
     socket.emit("nextRound");
     document.querySelector("#reveal-song-owner").disabled = false;
 
@@ -25,13 +25,11 @@ function insertGamePage() {
   });
 
   renderOtherPlayersVotes(
-    Object.fromEntries(playerList.map((player) => [player.id, null]))
+    Object.fromEntries(
+      Object.entries(room.players).map(([id, player]) => [id, null])
+    )
   );
-  renderScoreboard(
-    playerList.map((player) => {
-      return { ...player, score: 0, name: player.pmpname };
-    })
-  );
+  renderScoreboard();
   renderVotingSection();
   document.querySelector("#caste-vote").addEventListener("click", casteVote);
 }
@@ -51,21 +49,14 @@ function renderOtherPlayersVotes(votingList) {
     votingList
   )
     .map(
-      ([player, votedPlayer]) =>
+      ([playerId, votedPlayerId]) =>
         `<p class="${
-          votedPlayer
-            ? `bg-secondary text-dark voted-to-${votedPlayer}`
+          votedPlayerId
+            ? `bg-secondary text-dark voted-to-${votedPlayerId}`
             : "bg-danger"
-        } rounded w-auto p-10" id="player-voted-${player}">
-    ${
-      playerList.filter((playerDetails) => playerDetails.id === player)[0]
-        .pmpname
-    } - ${
-          votedPlayer
-            ? playerList.filter(
-                (playerDetails) => playerDetails.id === votedPlayer
-              )[0].pmpname
-            : "none"
+        } rounded w-auto p-10" id="player-voted-${playerId}">
+    ${room.players[playerId].name} - ${
+          votedPlayerId ? room.players[votedPlayerId].name : "none"
         }
   </p>`
     )
@@ -74,29 +65,32 @@ function renderOtherPlayersVotes(votingList) {
 
 function renderVotingSection() {
   // voting-section
-  document.querySelector("#voting-section").innerHTML = playerList
-    .filter((player) => player.id !== my.id)
+  document.querySelector("#voting-section").innerHTML = Object.entries(
+    room.players
+  )
+    .filter(([id, player]) => id !== my.id)
     .map(
-      (player) => `<div class="custom-radio m-15">
+      ([id, player]) => `<div class="custom-radio m-15">
     <input
       type="radio"
       name="voting-radio"
-      id="player-vote-id-${player.id}"
-      value="player-vote-id-${player.id}"
+      id="player-vote-id-${id}"
+      value="player-vote-id-${id}"
     />
-    <label for="player-vote-id-${player.id}">${player.pmpname}</label>
+    <label for="player-vote-id-${id}">${player.name}</label>
   </div>`
     )
     .join("");
 }
 
-function renderScoreboard(scoreboard) {
-  document.querySelector("#scoreboard").innerHTML = scoreboard
+function renderScoreboard() {
+  document.querySelector("#scoreboard").innerHTML = Object.entries(room.players)
     .map(
-      (
-        playerScoreboard
-      ) => `<p class="bg-primary rounded w-auto p-10" id="player-scoreboard-${playerScoreboard.id}">
-    ${playerScoreboard.name} - ${playerScoreboard.score}
+      ([
+        id,
+        player,
+      ]) => `<p class="bg-primary rounded w-auto p-10" id="player-scoreboard-${id}">
+    ${player.name} - ${player.score}
   </p>`
     )
     .join("");
@@ -113,7 +107,9 @@ function casteVote() {
 }
 
 function revealSongOwner() {
-  if (Object.entries(room.voting).length !== playerList.length) {
+  if (
+    Object.entries(room.voting).length !== Object.entries(room.players).length
+  ) {
     toastTopAlert(
       "Insufficient Votes",
       "Please ask everyone to caste their votes first.",
@@ -140,9 +136,10 @@ socket.on("revealSongOwner", (data) => {
   document.querySelector(
     "#current-song-owner"
   ).innerHTML = `Song Owner: ${ownerName}`;
-  if (my.isOwner) {
+  if (my.isHost) {
     document.querySelector("#reveal-song-owner").disabled = true;
-    document.querySelector("#next-round").disabled = false;
+    if (room.songsLeft !== 0)
+      document.querySelector("#next-round").disabled = false;
   }
   Array.from(document.querySelectorAll(`.voted-to-${ownerId}`)).forEach(
     (votedEle) => {
@@ -161,13 +158,9 @@ socket.on("updatedVotes", (voting) => {
   renderOtherPlayersVotes(voting);
 });
 
-socket.on("updatedScoreboard", (scoreboard) => {
-  makeLoaderVisible(false);
-  renderScoreboard(scoreboard);
-});
-
 function resetForNextRound(data) {
   const { song, songsLeft } = data;
+  room.songsLeft = songsLeft;
   document.querySelector("#songs-left").innerHTML = `Songs: ${songsLeft}`;
   document.querySelector("#current-song-owner").innerHTML = "";
   document.querySelector("#current-song-owner").classList.remove("d-flex");
@@ -176,20 +169,21 @@ function resetForNextRound(data) {
   document.querySelector("#current-song-link").value = song;
 
   document.querySelector("#next-round").disabled = true;
-  if (my.isOwner) document.querySelector("#reveal-song-owner").disabled = false;
+  if (my.isHost) document.querySelector("#reveal-song-owner").disabled = false;
   room.voting = {};
   if (document.querySelector("input[name='voting-radio']:checked"))
     document.querySelector(
       "input[name='voting-radio']:checked"
     ).checked = false;
   renderOtherPlayersVotes(
-    Object.fromEntries(playerList.map((player) => [player.id, null]))
+    Object.fromEntries(
+      Object.entries(room.players).map(([id, player]) => [id, null])
+    )
   );
 
   if (songsLeft === 0) {
     document.querySelector("#next-round").disabled = true;
     document.querySelector("#next-round").classList.remove("btn-secondary");
-    document.querySelector("#next-round").innerHTML =
-      "Game Over, no songs left...";
+    document.querySelector("#next-round").innerHTML = "No songs left...";
   }
 }

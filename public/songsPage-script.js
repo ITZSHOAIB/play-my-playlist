@@ -20,8 +20,8 @@ function insertSongspage(numberOfSongs) {
   </div>`
     )
     .join("");
-  if (my.isOwner) document.querySelector("#start-game").disabled = false;
-  renderPlayers();
+  if (my.isHost) document.querySelector("#start-game").disabled = false;
+  socket.emit("getUpdatedPlayers");
   updateCopyInvite();
   document
     .querySelector("#update-song-list")
@@ -63,7 +63,10 @@ socket.on("updatedSongList", (updatedSongLinks) => {
 });
 
 function startGame() {
-  if (playerList.length * room.numberOfSongs !== room.updatedSongLinks.length) {
+  if (
+    Object.entries(room.players).length * room.numberOfSongs !==
+    room.updatedSongLinks.length
+  ) {
     toastTopAlert(
       "Insufficient Songs",
       "Please ask everyone to submit their songs.",

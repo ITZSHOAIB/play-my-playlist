@@ -1,5 +1,5 @@
 function getPlayersCount(roomID) {
-  return Object.keys(games[roomID]).filter((key) => key.length === 20).length;
+  return Object.entries(games[roomID]["players"]).length;
 }
 
 function randomIntFromInterval(min, max) {

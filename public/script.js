@@ -1,20 +1,65 @@
-const socket = io();
+const GAME_STATE = {
+  settingsPage: "SETTINGS_PAGE",
+  songsPage: "SONGS_PAGE",
+  gamePage: "GAME_PAGE",
+};
+const socket = io({
+  // reconnectionDelay: 10000, // defaults to 1000
+  // reconnectionDelayMax: 10000, // defaults to 5000
+});
 const my = {
   id: null,
-  pmpname: null,
-  isOwner: false,
+  name: null,
+  isHost: false,
 };
-let playerList = [];
 const room = {
   roomId: null,
   numberOfSongs: null,
   updatedSongLinks: [],
   voting: {},
+  players: {},
+  songsLeft: 0,
 };
 
+// socket.on("connect", () => {
+//   console.log("recovered?", socket.recovered);
+
+//   setTimeout(() => {
+//     if (socket.io.engine) {
+//       // close the low-level connection and trigger a reconnection
+//       console.log("Closing connection...");
+//       socket.io.engine.close();
+//     }
+//   }, 10000);
+// });
 /************************************************
  ***Common Section--------------------
  *************************************************/
+
+function IsLandingPage() {
+  return (
+    document.querySelector("#landing") &&
+    document.querySelector("#landing").classList.contains("d-flex")
+  );
+}
+function isSettingsPage() {
+  return (
+    document.querySelector("#settings") &&
+    document.querySelector("#settings").classList.contains("d-flex")
+  );
+}
+function isSongsPage() {
+  return (
+    document.querySelector("#songs-page") &&
+    document.querySelector("#songs-page").classList.contains("d-flex")
+  );
+}
+function isGamePage() {
+  return (
+    document.querySelector("#game-page") &&
+    document.querySelector("#game-page").classList.contains("d-flex")
+  );
+}
 
 function makeLoaderVisible(visible) {
   console.log(visible);
@@ -29,8 +74,8 @@ function renderPlayers() {
       .map(
         (player) =>
           `<p class="bg-danger rounded w-auto p-10" id="player-${player.id}">${
-            player.pmpname
-          } ${player.isOwner ? "(Host)" : ""}</p>`
+            player.name
+          } ${player.isHost ? "(Host)" : ""}</p>`
       )
       .join("");
 }
@@ -81,7 +126,7 @@ socket.on("disconnection", async (player) => {
     document.querySelector(`#score-player-${player.id}`).remove();
   }
   toastTopAlert(
-    `${player.pmpname} has Left The Room`,
+    `${player.name} has Left The Room`,
     "He/She doesn't like you 😢 It's okay, you are precious ❤️",
     "alert-secondary"
   );
@@ -98,21 +143,6 @@ socket.on("roomExists", (data) => {
 
 //This will happen when we will not have enought player or Host left
 socket.on("roomClosed", reloadToMainPageIfRoomClosed);
-
-socket.on("isRoomStarted", (data) => {
-  if (data.isStarted) {
-    if (document.querySelector("#join-room"))
-      document.querySelector("#join-room").disabled = true;
-    toastTopAlert(
-      "Room already started",
-      "Room you are trying to access is already started playing...",
-      "alert-danger"
-    );
-    window.setTimeout(function () {
-      window.location.href = "/";
-    }, 3000);
-  }
-});
 
 /************************************************
  ***Alert Section--------------------

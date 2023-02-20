@@ -1,16 +1,23 @@
-const socketio = require("socket.io");
+const { Server } = require("socket.io");
 
 const Room = require("./controllers/Rooms");
 const Disconnect = require("./controllers/Disconnect");
 const Game = require("./controllers/Game");
 
 module.exports.init = (server) => {
-  const io = socketio(server);
+  const io = new Server(server, {
+    connectionStateRecovery: {
+      maxDisconnectionDuration: 5 * 60 * 1000,
+    },
+  });
+
+  //Socket operations...
   io.on("connection", (socket) => {
-    console.log("connected user " + socket.id);
+    console.log("🚀 ~ connected user ~ socket.id", socket.id);
+    if (socket.recovered) console.log("🚀 ~ Socker Recovered ~ ", socket.data);
     socket.on("roomExists", (data) => new Room(io, socket).roomExists(data));
-    socket.on("isRoomStarted", (data) =>
-      new Room(io, socket).isRoomStarted(data)
+    socket.on("getGameState", (data) =>
+      new Room(io, socket).getGameState(data)
     );
     socket.on("newPrivateRoom", (player) =>
       new Room(io, socket).createPrivateRoom(player)
@@ -22,6 +29,9 @@ module.exports.init = (server) => {
       new Room(io, socket).updateSettings(data)
     );
     socket.on("moveToSongsPage", () => new Room(io, socket).moveToSongsPage());
+    socket.on("getUpdatedPlayers", () =>
+      new Room(io, socket).getUpdatedPlayers()
+    );
     socket.on("updateSongList", (data) =>
       new Room(io, socket).updateSongList(data)
     );
